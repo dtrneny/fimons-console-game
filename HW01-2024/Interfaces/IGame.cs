@@ -5,13 +5,11 @@ namespace HW01_2024.Interfaces
 {
     public interface IGame
     {
-        GameState State { get; set; }
+        GamePhase Phase { get; set; }
         Player Player { get; }
         /// <summary>
         /// Starts the game.
         /// </summary>
         public void Start();
-
-        public void StartGameLoop();
     }
 }

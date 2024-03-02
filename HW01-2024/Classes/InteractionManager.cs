@@ -17,6 +17,11 @@ public class InteractionManager: IInteractionManager
         Console.WriteLine("5. quit");
     }
 
+    public void PrintFarewell()
+    {
+        Console.WriteLine("Thank you for playing FImons. We hope you enjoyed your stay.");
+    }
+
     public void GetPlayersIntInput(int min, int max, out int value)
     {
         // TODO: domyslet jak resit defaultni hodnotu
@@ -50,11 +55,12 @@ public class InteractionManager: IInteractionManager
         Console.WriteLine("Hello there, this is FImon championship. We are glad that you arrived.");
         Console.WriteLine("Please pick three FImons for your upcoming battles");
         
+        // TODO: Extract from InteractionManager
         selectedFImons = [];
 
         while (selectedFImons.Count < 3)
         {
-            PrintOrderedBattleFImons(starterFImons);
+            PrintOrderedFImons(starterFImons);
             GetPlayersIntInput(1, starterFImons.Count, out var selected);
             var selectedFImon = starterFImons[selected - 1];
             selectedFImons.Add(selectedFImon);
@@ -91,7 +97,7 @@ public class InteractionManager: IInteractionManager
         Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed");
     }
 
-    private void PrintOrderedBattleFImons(List<FImon> fimons)
+    public void PrintOrderedFImons(List<FImon> fimons)
     {
         for (var i = 0; i < fimons.Count; i++)
         {

@@ -5,4 +5,9 @@ namespace HW01_2024.Classes;
 public class Player
 {
     public List<FImon> FImons { get; set; } = [];
+
+    public void SortFImons()
+    {
+        
+    }
 }
