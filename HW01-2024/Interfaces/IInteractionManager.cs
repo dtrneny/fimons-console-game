@@ -7,4 +7,5 @@ public interface IInteractionManager
     public void PrintActions();
     public void PrintFImonIdleStats(FImon fimon);
     public void PrintFImonBattleStats(FImon fimon);
+    public void GetPlayersIntInput(int min, int max, out int value);
 }
