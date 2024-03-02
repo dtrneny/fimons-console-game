@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HW01_2024.Enums;
 using HW01_2024.Interfaces;
@@ -9,9 +10,7 @@ public class Game : IGame
     public GamePhase Phase { get; set; } = GamePhase.Starting;
     private InteractionManager InteractionManager { get; } = new();
     public Player Player { get; } = new();
-
-    private int TournamentLevel { get; set; } = 1;
-
+    
     private List<FImon> StarterFImons { get; } =
     [
         new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
@@ -29,6 +28,11 @@ public class Game : IGame
             new FImon("Charmeleon", 6, 18, 23, FImonOrigin.Fire),
             new FImon("Wartortle", 6, 18, 23, FImonOrigin.Water),
             new FImon("Ivysaur", 5, 16, 22, FImonOrigin.Grass),
+        ]),
+        new Rival([
+            new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
+            new FImon("Charmander", 5, 15, 25, FImonOrigin.Fire),
+            new FImon("Squirtle", 5, 15, 25, FImonOrigin.Water),
         ]),
         new Rival([
             new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
@@ -55,8 +59,10 @@ public class Game : IGame
                 case GamePhase.Ending:
                     HandleEndingPhase();
                     break;
-                default:
+                case GamePhase.Terminating:
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
@@ -66,25 +72,53 @@ public class Game : IGame
         switch (actionNumber)
         {
             case 1:
-                var rival = TournamentRivals[TournamentLevel - 1];
-                InteractionManager.PrintOrderedFImons(rival.FImons);
+                CheckAction();
                 break;
             case 2:
-                Phase = GamePhase.Fighting;
+                FightActon();
                 break;
             case 3:
-                InteractionManager.PrintOrderedFImons(Player.FImons);
+                InfoAction();
                 break;
             case 4:
-                InteractionManager.PrintSortingInstructions();
-                var order = InteractionManager.GetPlayersIntListInput(1, Player.FImons.Count, Player.FImons.Count);
-                Player.SortFImons(order);
-                InteractionManager.PrintOrderedFImons(Player.FImons);
+                SortAction();
                 break;
             case 5:
-                Phase = GamePhase.Ending;
+                QuitActon();
                 break;
         }
+    }
+
+    private void CheckAction()
+    {
+        if (!UpcomingContestantAvailable()) { return; }
+        
+        var rival = TournamentRivals[0];
+        InteractionManager.PrintOrderedFImons(rival.FImons);
+    }
+
+    private void FightActon()
+    {
+        Phase = GamePhase.Fighting;
+    }
+
+    private void InfoAction()
+    {
+        InteractionManager.PrintOrderedFImons(Player.FImons);
+    }
+
+    private void SortAction()
+    {
+        InteractionManager.PrintSortingInstructions();
+        InteractionManager.PrintOrderedFImons(Player.FImons);
+        var order = InteractionManager.GetPlayersIntListInput(1, Player.FImons.Count, Player.FImons.Count);
+        Player.SortFImons(order);
+        InteractionManager.PrintOrderedFImons(Player.FImons);
+    }
+    
+    private void QuitActon()
+    {
+        Phase = GamePhase.Ending;
     }
     
     private void HandleStartingPhase()
@@ -112,12 +146,25 @@ public class Game : IGame
     
     private void HandleFightingPhase()
     {
-        Phase = GamePhase.Ending;
+        var battle = new Battle();
+        if (!UpcomingContestantAvailable()) { return; }
+        
+        var rival = TournamentRivals[0];
+        var victoriousContestant = battle.PerformBattleBetweenContestants(Player, rival);
+            
+        InteractionManager.PrintOrderedFImons(victoriousContestant.FImons);
+        TournamentRivals.Remove(rival);
+        Phase = GamePhase.Picking;
     }
     
     private void HandleEndingPhase()
     {
         InteractionManager.PrintFarewell();
         Phase = GamePhase.Terminating;
+    }
+
+    private bool UpcomingContestantAvailable()
+    {
+        return TournamentRivals.Count > 0;
     }
 }

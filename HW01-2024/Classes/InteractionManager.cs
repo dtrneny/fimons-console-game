@@ -105,7 +105,7 @@ public class InteractionManager: IInteractionManager
     
     public void PrintFImonIdleStats(FImon fimon)
     {
-        Console.ForegroundColor = GetFImonOriginColor(fimon.Origin);
+        Console.ForegroundColor = GetFImonOriginColor(fimon.Characteristic.Origin);
         Console.Write(fimon.Name);
         Console.ResetColor();
         Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed, level {fimon.Level}, {fimon.Experience}/100 XP");
@@ -113,7 +113,7 @@ public class InteractionManager: IInteractionManager
 
     public void PrintFImonBattleStats(FImon fimon)
     {
-        Console.ForegroundColor = GetFImonOriginColor(fimon.Origin);
+        Console.ForegroundColor = GetFImonOriginColor(fimon.Characteristic.Origin);
         Console.Write(fimon.Name);
         Console.ResetColor();
         Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed");
