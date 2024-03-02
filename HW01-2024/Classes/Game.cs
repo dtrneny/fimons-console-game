@@ -10,6 +10,8 @@ public class Game : IGame
     private InteractionManager InteractionManager { get; } = new();
     public Player Player { get; } = new();
 
+    private int TournamentLevel { get; set; } = 1;
+
     private List<FImon> StarterFImons { get; } =
     [
         new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
@@ -19,6 +21,20 @@ public class Game : IGame
         new FImon("Charmeleon", 6, 18, 23, FImonOrigin.Fire),
         new FImon("Wartortle", 6, 18, 23, FImonOrigin.Water),
         new FImon("Ivysaur", 5, 16, 22, FImonOrigin.Grass),
+    ];
+
+    private List<Rival> TournamentRivals { get; } =
+    [
+        new Rival([
+            new FImon("Charmeleon", 6, 18, 23, FImonOrigin.Fire),
+            new FImon("Wartortle", 6, 18, 23, FImonOrigin.Water),
+            new FImon("Ivysaur", 5, 16, 22, FImonOrigin.Grass),
+        ]),
+        new Rival([
+            new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
+            new FImon("Charmander", 5, 15, 25, FImonOrigin.Fire),
+            new FImon("Squirtle", 5, 15, 25, FImonOrigin.Water),
+        ])
     ];
 
     public void Start()
@@ -44,24 +60,54 @@ public class Game : IGame
             }
         }
     }
-
+    
+    private void HandlePlayerAction(int actionNumber)
+    {
+        switch (actionNumber)
+        {
+            case 1:
+                var rival = TournamentRivals[TournamentLevel - 1];
+                InteractionManager.PrintOrderedFImons(rival.FImons);
+                break;
+            case 2:
+                Phase = GamePhase.Fighting;
+                break;
+            case 3:
+                InteractionManager.PrintOrderedFImons(Player.FImons);
+                break;
+            case 4:
+                InteractionManager.PrintSortingInstructions();
+                var order = InteractionManager.GetPlayersIntListInput(1, Player.FImons.Count, Player.FImons.Count);
+                Player.SortFImons(order);
+                InteractionManager.PrintOrderedFImons(Player.FImons);
+                break;
+            case 5:
+                Phase = GamePhase.Ending;
+                break;
+        }
+    }
+    
     private void HandleStartingPhase()
     {
-        InteractionManager.HandleIntroduction(StarterFImons, out var selectedFImons);
-        StarterFImons.Clear();
+        InteractionManager.PrintIntroduction();
+        InteractionManager.PrintOrderedFImons(StarterFImons);
         
-        Player.FImons = selectedFImons;
-        InteractionManager.PrintOrderedFImons(Player.FImons);
+        var selection = InteractionManager.GetPlayersIntListInput(1, StarterFImons.Count, 3);
 
+        foreach (var orderNum in selection) { Player.FImons.Add(StarterFImons[orderNum - 1]); }
+        
+        InteractionManager.PrintOrderedFImons(Player.FImons);
+        
+        StarterFImons.Clear();
         Phase = GamePhase.Picking;
     }
 
     private void HandlePickingPhase()
     {
         InteractionManager.PrintActions();
-        InteractionManager.GetPlayersIntInput(1, 5, out var action);
+        var selectedNum = InteractionManager.GetPlayersIntInput(1, 5);
         
-        HandlePlayerAction(action);
+        HandlePlayerAction(selectedNum);
     }
     
     private void HandleFightingPhase()
@@ -73,27 +119,5 @@ public class Game : IGame
     {
         InteractionManager.PrintFarewell();
         Phase = GamePhase.Terminating;
-    }
-
-    private void HandlePlayerAction(int actionNumber)
-    {
-        switch (actionNumber)
-        {
-            case 1:
-                // TODO: Check enemy
-                break;
-            case 2:
-                Phase = GamePhase.Fighting;
-                break;
-            case 3:
-                InteractionManager.PrintOrderedFImons(Player.FImons);
-                break;
-            case 4:
-                Player.SortFImons();
-                break;
-            case 5:
-                Phase = GamePhase.Ending;
-                break;
-        }
     }
 }

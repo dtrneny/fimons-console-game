@@ -1,4 +1,6 @@
-﻿namespace HW01_2024.Interfaces
+﻿using HW01_2024.Classes;
+
+namespace HW01_2024.Interfaces
 {
     public interface IBattle
     {
@@ -8,7 +10,7 @@
         /// <param name="player">Player trainer</param>
         /// <param name="enemy">Enemy trainer</param>
         /// <returns>Winner trainer</returns>
-        //TODO:
+        public ITournamentContestant PerformBattleBetweenContestants(Player player, Rival enemy);
 
         /// <summary>
         /// Performs one round of a battle between two FImons.
@@ -16,6 +18,7 @@
         /// <param name="playerFImon">Player trainer's FImon</param>
         /// <param name="enemyFImon">Enemy trainer's FImon</param>
         /// <returns>Winner FImon</returns>
-        //TODO:
+        public FImon PerformBattleBetweenFImons(FImon playerFImon, FImon enemyFImon);
+
     }
 }
