@@ -1,4 +1,5 @@
 using HW01_2024.Enums;
+using HW01_2024.Managers;
 
 namespace HW01_2024.Classes;
 
@@ -43,6 +44,6 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
         MaxHealth += 5;
         Speed++;
         Level++;
-        InteractionManager.PrintFImonLevelUpMessage(Name, Level);
+        OutputManager.PrintFImonLevelUpMessage(Name, Level);
     }
 }

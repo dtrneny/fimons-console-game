@@ -1,5 +1,6 @@
 using System;
 using HW01_2024.Interfaces;
+using HW01_2024.Managers;
 
 namespace HW01_2024.Classes;
 
@@ -16,23 +17,25 @@ public class Battle: IBattle
 
             if (playerFImon == null || enemyFImon == null) continue;
             
-            InteractionManager.PrintBattleAnnouncement(playerFImon, enemyFImon, roundCounter);
+            OutputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
             var victoriousFImon = PerformBattleBetweenFImons(playerFImon, enemyFImon);
             
             if (victoriousFImon == playerFImon)
             {
-                InteractionManager.PrintFImonDefeatMessage(enemyFImon, false);
+                OutputManager.PrintFImonDefeatMessage(enemyFImon, false);
             }
             else
             {
-                InteractionManager.PrintFImonDefeatMessage(playerFImon, true);
+                OutputManager.PrintFImonDefeatMessage(playerFImon, true);
             }
             
-            InteractionManager.GetPlayersActivityInput();
+            InputManager.GetPlayersActivitySign();
             roundCounter++;
         }
 
-        return player;
+        return player.FImons.Exists(fimon => fimon.Health > 0)
+            ? player
+            : enemy;
     }
 
     public FImon PerformBattleBetweenFImons(FImon playerFImon, FImon enemyFImon)
@@ -65,7 +68,7 @@ public class Battle: IBattle
             : attackingFImon.AttackDamage;
         
         attackingFImon.Attack(targetedFImon, damage);
-        
-        InteractionManager.PrintAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
+
+        OutputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
     }
 }

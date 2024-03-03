@@ -15,10 +15,11 @@ public class Player : ITournamentContestant
         }
     }
 
-    public void SortFImons(IEnumerable<int> order)
+    public void SortFImons(List<int> order)
     {
-        // TODO: edge cases
-        // TODO: Dat list misto enu
-        FImons = order.Select(index => FImons[index - 1]).ToList();
+        FImons = order
+            .Where(index => index >= 1 && index <= FImons.Count)
+            .Select(index => FImons[index - 1])
+            .ToList();
     }
 }

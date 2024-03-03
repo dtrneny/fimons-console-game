@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HW01_2024.Enums;
 using HW01_2024.Interfaces;
+using HW01_2024.Managers;
 
 namespace HW01_2024.Classes;
 
@@ -9,37 +10,32 @@ public class Game : IGame
 {
     public GamePhase Phase { get; set; } = GamePhase.Starting;
     public Player Player { get; } = new();
+    private List<FImon> StarterFImons { get; } = [
+        new FImon("Typhlosion", 7, 21, 27, FImonOrigin.Fire),
+        new FImon("Feraligatr", 7, 23, 25, FImonOrigin.Water),
+        new FImon("Meganium", 7, 22, 26, FImonOrigin.Grass),
+        new FImon("Entei", 7, 24, 23, FImonOrigin.Fire),
+        new FImon("Suicune", 7, 25, 22, FImonOrigin.Water),
+        new FImon("Celebi", 7, 23, 24, FImonOrigin.Grass)
+    ];
+    private List<Rival> TournamentRivals { get; } = [
+        new Rival([
+            new FImon("Dragonite", 7, 23, 24, FImonOrigin.Fire),
+            new FImon("Lapras", 7, 24, 23, FImonOrigin.Water),
+            new FImon("Meganium", 7, 22, 25, FImonOrigin.Grass),
+        ]),
+        new Rival([
+            new FImon("Gengar", 7, 19, 28, FImonOrigin.Fire),
+            new FImon("Jolteon", 6, 20, 28, FImonOrigin.Water),
+            new FImon("Alakazam", 7, 18, 29, FImonOrigin.Grass),
+        ]),
+        new Rival([
+            new FImon("Pikachu", 6, 18, 30, FImonOrigin.Fire),
+            new FImon("Squirtle", 6, 19, 29, FImonOrigin.Water),
+            new FImon("Bulbasaur", 6, 18, 30, FImonOrigin.Grass),
+        ]),
+    ];
     
-    private List<FImon> StarterFImons { get; } =
-    [
-        new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
-        new FImon("Charmander", 5, 15, 25, FImonOrigin.Fire),
-        new FImon("Squirtle", 5, 15, 25, FImonOrigin.Water),
-        new FImon("Bulbasaur", 4, 17, 20, FImonOrigin.Grass),
-        new FImon("Charmeleon", 6, 18, 23, FImonOrigin.Fire),
-        new FImon("Wartortle", 6, 18, 23, FImonOrigin.Water),
-        new FImon("Ivysaur", 5, 16, 22, FImonOrigin.Grass),
-    ];
-
-    private List<Rival> TournamentRivals { get; } =
-    [
-        new Rival([
-            new FImon("Charmeleon", 6, 18, 23, FImonOrigin.Fire),
-            new FImon("Wartortle", 6, 18, 23, FImonOrigin.Water),
-            new FImon("Ivysaur", 5, 16, 22, FImonOrigin.Grass),
-        ]),
-        new Rival([
-            new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
-            new FImon("Charmander", 5, 15, 25, FImonOrigin.Fire),
-            new FImon("Squirtle", 5, 15, 25, FImonOrigin.Water),
-        ]),
-        new Rival([
-            new FImon("Charizard", 7, 20, 28, FImonOrigin.Fire),
-            new FImon("Charmander", 5, 15, 25, FImonOrigin.Fire),
-            new FImon("Squirtle", 5, 15, 25, FImonOrigin.Water),
-        ])
-    ];
-
     public void Start()
     {
         while (Phase != GamePhase.Terminating)
@@ -98,7 +94,7 @@ public class Game : IGame
         if (!UpcomingContestantAvailable()) { return; }
         
         var rival = TournamentRivals[0];
-        InteractionManager.PrintOrderedBattleFImons(rival.FImons);
+        OutputManager.PrintOrderedFImonsInfo(rival.FImons);
     }
 
     private void FightAction()
@@ -108,16 +104,16 @@ public class Game : IGame
 
     private void InfoAction()
     {
-        InteractionManager.PrintOrderedIdleFImons(Player.FImons);
+        OutputManager.PrintOrderedFImonsInfo(Player.FImons, true);
     }
 
     private void SortAction()
     {
-        InteractionManager.PrintSortingInstructions();
-        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
-        var order = InteractionManager.GetPlayersIntListInput(1, Player.FImons.Count, Player.FImons.Count);
+        OutputManager.PrintSortingMessage();
+        OutputManager.PrintOrderedFImonsInfo(Player.FImons);
+        var order = InputManager.GetPlayersIntInRangeListInput(1, Player.FImons.Count, Player.FImons.Count);
         Player.SortFImons(order);
-        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
+        OutputManager.PrintOrderedFImonsInfo(Player.FImons);
     }
     
     private void QuitAction()
@@ -127,14 +123,14 @@ public class Game : IGame
     
     private void HandleStartingPhase()
     {
-        InteractionManager.PrintIntroduction();
-        InteractionManager.PrintOrderedBattleFImons(StarterFImons);
-        
-        var selection = InteractionManager.GetPlayersIntListInput(1, StarterFImons.Count, 3);
+        OutputManager.PrintIntroductionMessages();
+        OutputManager.PrintOrderedFImonsInfo(StarterFImons);
 
-        foreach (var orderNum in selection) { Player.FImons.Add(StarterFImons[orderNum - 1]); }
+        var selection = InputManager.GetPlayersIntInRangeListInput(1, StarterFImons.Count, 3);
         
-        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
+        foreach (var orderNum in selection) { Player.FImons.Add(StarterFImons[orderNum - 1]); }
+
+        OutputManager.PrintChosenFImons(Player.FImons);
         
         StarterFImons.Clear();
         Phase = GamePhase.Picking;
@@ -142,8 +138,8 @@ public class Game : IGame
 
     private void HandlePickingPhase()
     {
-        InteractionManager.PrintActions();
-        var selectedNum = InteractionManager.GetPlayersIntInput(1, 5);
+        OutputManager.PrintActionsMessages();
+        var selectedNum = InputManager.GetPlayersIntInputInRange(1, 5);
         
         HandlePlayerAction(selectedNum);
     }
@@ -159,13 +155,14 @@ public class Game : IGame
         var battle = new Battle();
         
         var rival = TournamentRivals[0];
-        var battleResult = battle.PerformBattleBetweenContestants(Player, rival) == Player;
+        var playerWon = battle.PerformBattleBetweenContestants(Player, rival) == Player;
 
-        InteractionManager.PrintBattleResult(battleResult);
-        if (battleResult)
+        OutputManager.PrintBattleResultMessage(playerWon);
+        if (playerWon)
         {
             HandlePlayersVictory();   
             Player.RecoverFImons();
+            TournamentRivals.Remove(rival);
         }
         else
         {
@@ -173,20 +170,19 @@ public class Game : IGame
             rival.RecoverFImons();
             Player.RecoverFImons();
         }
-
-        TournamentRivals.Remove(rival);
+        
         Phase = GamePhase.Picking;
     }
     
     private void HandleEndingPhase()
     {
-        InteractionManager.PrintFarewell();
+        OutputManager.PrintEndingMessage();
         Phase = GamePhase.Terminating;
     }
 
     private void HandleVictoryPhase()
     {
-        InteractionManager.PrintVictoryMessages();
+        OutputManager.PrintVictoryMessages();
         Phase = GamePhase.Ending;
     }
 
