@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using HW01_2024.Enums;
-using HW01_2024.Interfaces;
 
 namespace HW01_2024.Classes;
 
-public class InteractionManager: IInteractionManager
+public static class InteractionManager
 {
-    public void PrintActions()
+    public static void PrintActions()
     {
         Console.WriteLine("Choose your action e. g. [1]: ");
         Console.WriteLine("1. check");
@@ -18,28 +16,28 @@ public class InteractionManager: IInteractionManager
         Console.WriteLine("5. quit");
     }
 
-    public void PrintFarewell()
+    public static void PrintFarewell()
     {
         Console.WriteLine("Thank you for playing FImons. We hope you enjoyed your stay.");
     }
     
-    public void PrintIntroduction()
+    public static void PrintIntroduction()
     {
         Console.WriteLine("Hello there, this is FImon championship. We are glad that you arrived.");
         Console.WriteLine("Please pick three FImons for your upcoming battles e. g. [1 2 3]");
     }
 
-    public void PrintSortingInstructions()
+    public static void PrintSortingInstructions()
     {
         Console.WriteLine("Please enter FImons order [e. g. 1 2 3]");
     }
     
-    private int? SanitizeIntFromString(string? value)
+    private static int? SanitizeIntFromString(string? value)
     {
         return int.TryParse(value, out var output) ? output : null;
     }
 
-    public int GetPlayersIntInput(int min, int max)
+    public static int GetPlayersIntInput(int min, int max)
     {
         while (true)
         {
@@ -59,7 +57,14 @@ public class InteractionManager: IInteractionManager
         }
     }
 
-    public IEnumerable<int> GetPlayersIntListInput(int min, int max, int length)
+    public static void GetPlayersActivityInput()
+    {
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey();
+        Console.WriteLine();
+    }
+
+    public static IEnumerable<int> GetPlayersIntListInput(int min, int max, int length)
     {
         while (true)
         {
@@ -92,39 +97,100 @@ public class InteractionManager: IInteractionManager
         }
     }
     
-    private ConsoleColor GetFImonOriginColor(FImonOrigin origin)
+    private static void PrintFImonColoredName(FImon fimon)
     {
-        return origin switch
+        var originColor = fimon.Characteristic.Origin switch
         {
             FImonOrigin.Water => ConsoleColor.Blue,
             FImonOrigin.Fire => ConsoleColor.Red,
             FImonOrigin.Grass => ConsoleColor.Green,
             _ => ConsoleColor.White
         };
+        
+        Console.ForegroundColor = originColor;
+        Console.Write(fimon.Name);
+        Console.ResetColor();
     }
     
-    public void PrintFImonIdleStats(FImon fimon)
-    {
-        Console.ForegroundColor = GetFImonOriginColor(fimon.Characteristic.Origin);
-        Console.Write(fimon.Name);
-        Console.ResetColor();
-        Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed, level {fimon.Level}, {fimon.Experience}/100 XP");
-    }
-
-    public void PrintFImonBattleStats(FImon fimon)
-    {
-        Console.ForegroundColor = GetFImonOriginColor(fimon.Characteristic.Origin);
-        Console.Write(fimon.Name);
-        Console.ResetColor();
-        Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed");
-    }
-
-    public void PrintOrderedFImons(List<FImon> fimons)
+    public static void PrintOrderedBattleFImons(List<FImon> fimons)
     {
         for (var i = 0; i < fimons.Count; i++)
         {
+            var fimon = fimons[i];
             Console.Write($"{i + 1}. ");
-            PrintFImonBattleStats(fimons[i]);
+            PrintFImonColoredName(fimon);
+            Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed");
         }
+    }
+    
+    public static void PrintOrderedIdleFImons(List<FImon> fimons)
+    {
+        for (var i = 0; i < fimons.Count; i++)
+        {
+            var fimon = fimons[i];
+            Console.Write($"{i + 1}. ");
+            PrintFImonColoredName(fimon);
+            Console.WriteLine($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed, level {fimon.Level}, {fimon.Experience}/100 XP");
+        }
+    }
+
+    public static void PrintBattleAnnouncement(FImon playerFImon, FImon enemyFImon, int round)
+    {
+        PrintDivider();
+        Console.Write($"Round {round}: ");
+        PrintFImonColoredName(playerFImon);
+        Console.Write(" vs. ");
+        PrintFImonColoredName(enemyFImon);
+        Console.WriteLine();
+        PrintDivider();
+    }
+
+    public static void PrintAttackMessage(FImon attackingFImon, FImon targetedFImon, int damage, bool playerAttacking)
+    {
+        Console.Write(playerAttacking ? "Player's " : "Enemy's ");
+        PrintFImonColoredName(attackingFImon);
+        Console.Write($" dealt {damage} damage to ");
+        Console.Write(playerAttacking ? "enemy's " : "player's ");
+        PrintFImonColoredName(targetedFImon);
+        Console.WriteLine();
+    }
+
+    public static void PrintFImonDefeatMessage(FImon defeatedFImon, bool playersFImon)
+    {
+        Console.Write(playersFImon ? "Player's " : "Enemy's ");
+        PrintFImonColoredName(defeatedFImon);
+        Console.Write(" was defeated!");
+        Console.WriteLine();
+    }
+
+    public static void PrintBattleResult(bool playerWon)
+    {
+        PrintDivider();
+        Console.Write("You ");
+        Console.Write(playerWon ? "won":"lost");
+        Console.WriteLine(" the battle.");
+        PrintDivider();
+    }
+
+    public static void PrintFImonLevelUpMessage(string fimonName, int level)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"{fimonName} is now level {level}!");
+        Console.ResetColor();
+    }
+
+    private static void PrintDivider()
+    {
+        Console.WriteLine("***");
+    }
+
+    public static void PrintVictoryMessages()
+    {
+        PrintDivider();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Congratulations! You've emerged victorious, defeating all tournament opponents with skill and determination.");
+        Console.WriteLine("As the new champion, you've unlocked the doors to even more exciting tournaments waiting for you to explore.");
+        Console.ResetColor();
+        PrintDivider();
     }
 }

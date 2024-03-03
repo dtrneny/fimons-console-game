@@ -7,15 +7,29 @@ public class Battle: IBattle
 {
     public ITournamentContestant PerformBattleBetweenContestants(Player player, Rival enemy)
     {
+        var roundCounter = 1;
         while (player.FImons.Exists(fimon => fimon.Health > 0) && enemy.FImons.Exists(fimon => fimon.Health > 0))
         {
+            // TODO: overit find
             var playerFImon = player.FImons.Find(fimon => fimon.Health > 0);
             var enemyFImon = enemy.FImons.Find(fimon => fimon.Health > 0);
 
-            if (playerFImon != null && enemyFImon != null)
+            if (playerFImon == null || enemyFImon == null) continue;
+            
+            InteractionManager.PrintBattleAnnouncement(playerFImon, enemyFImon, roundCounter);
+            var victoriousFImon = PerformBattleBetweenFImons(playerFImon, enemyFImon);
+            
+            if (victoriousFImon == playerFImon)
             {
-                PerformBattleBetweenFImons(playerFImon, enemyFImon);
+                InteractionManager.PrintFImonDefeatMessage(enemyFImon, false);
             }
+            else
+            {
+                InteractionManager.PrintFImonDefeatMessage(playerFImon, true);
+            }
+            
+            InteractionManager.GetPlayersActivityInput();
+            roundCounter++;
         }
 
         return player;
@@ -27,20 +41,31 @@ public class Battle: IBattle
         {
             if (playerFImon.Speed >= enemyFImon.Speed)
             {
-                playerFImon.Attack(enemyFImon);
-                enemyFImon.Attack(playerFImon);
-                Console.WriteLine($"Player {playerFImon.Name} {playerFImon.Health} : Enemy {enemyFImon.Name} {enemyFImon.Health}");
+                PerformAttack(playerFImon, enemyFImon, true);
+                PerformAttack(enemyFImon, playerFImon, false);
             }
             else
             {
-                enemyFImon.Attack(playerFImon);
-                playerFImon.Attack(enemyFImon);
-                Console.WriteLine($"Player {playerFImon.Name} {playerFImon.Health} : Enemy {enemyFImon.Name} {enemyFImon.Health}");
+                PerformAttack(enemyFImon, playerFImon, false);
+                PerformAttack(playerFImon, enemyFImon, true);
             }   
         }
 
         return playerFImon.Health >= 0
             ? playerFImon
             : enemyFImon;
+    }
+
+    private void PerformAttack(FImon attackingFImon, FImon targetedFImon, bool playerAttacking)
+    {
+        if (attackingFImon.Health <= 0) { return; }
+        
+        var damage = attackingFImon.Characteristic.Origin == targetedFImon.Characteristic.WeaknessTo
+            ? attackingFImon.AttackDamage * 2
+            : attackingFImon.AttackDamage;
+        
+        attackingFImon.Attack(targetedFImon, damage);
+        
+        InteractionManager.PrintAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
     }
 }

@@ -8,7 +8,6 @@ namespace HW01_2024.Classes;
 public class Game : IGame
 {
     public GamePhase Phase { get; set; } = GamePhase.Starting;
-    private InteractionManager InteractionManager { get; } = new();
     public Player Player { get; } = new();
     
     private List<FImon> StarterFImons { get; } =
@@ -59,6 +58,9 @@ public class Game : IGame
                 case GamePhase.Ending:
                     HandleEndingPhase();
                     break;
+                case GamePhase.Victory:
+                    HandleVictoryPhase();
+                    break;
                 case GamePhase.Terminating:
                     break;
                 default:
@@ -69,13 +71,15 @@ public class Game : IGame
     
     private void HandlePlayerAction(int actionNumber)
     {
+        // TODO: default
+        // TODO: handle actionNumber
         switch (actionNumber)
         {
             case 1:
                 CheckAction();
                 break;
             case 2:
-                FightActon();
+                FightAction();
                 break;
             case 3:
                 InfoAction();
@@ -84,7 +88,7 @@ public class Game : IGame
                 SortAction();
                 break;
             case 5:
-                QuitActon();
+                QuitAction();
                 break;
         }
     }
@@ -94,29 +98,29 @@ public class Game : IGame
         if (!UpcomingContestantAvailable()) { return; }
         
         var rival = TournamentRivals[0];
-        InteractionManager.PrintOrderedFImons(rival.FImons);
+        InteractionManager.PrintOrderedBattleFImons(rival.FImons);
     }
 
-    private void FightActon()
+    private void FightAction()
     {
         Phase = GamePhase.Fighting;
     }
 
     private void InfoAction()
     {
-        InteractionManager.PrintOrderedFImons(Player.FImons);
+        InteractionManager.PrintOrderedIdleFImons(Player.FImons);
     }
 
     private void SortAction()
     {
         InteractionManager.PrintSortingInstructions();
-        InteractionManager.PrintOrderedFImons(Player.FImons);
+        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
         var order = InteractionManager.GetPlayersIntListInput(1, Player.FImons.Count, Player.FImons.Count);
         Player.SortFImons(order);
-        InteractionManager.PrintOrderedFImons(Player.FImons);
+        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
     }
     
-    private void QuitActon()
+    private void QuitAction()
     {
         Phase = GamePhase.Ending;
     }
@@ -124,13 +128,13 @@ public class Game : IGame
     private void HandleStartingPhase()
     {
         InteractionManager.PrintIntroduction();
-        InteractionManager.PrintOrderedFImons(StarterFImons);
+        InteractionManager.PrintOrderedBattleFImons(StarterFImons);
         
         var selection = InteractionManager.GetPlayersIntListInput(1, StarterFImons.Count, 3);
 
         foreach (var orderNum in selection) { Player.FImons.Add(StarterFImons[orderNum - 1]); }
         
-        InteractionManager.PrintOrderedFImons(Player.FImons);
+        InteractionManager.PrintOrderedBattleFImons(Player.FImons);
         
         StarterFImons.Clear();
         Phase = GamePhase.Picking;
@@ -146,13 +150,30 @@ public class Game : IGame
     
     private void HandleFightingPhase()
     {
+        if (!UpcomingContestantAvailable())
+        {
+            Phase = GamePhase.Victory;
+            return;
+        }
+        
         var battle = new Battle();
-        if (!UpcomingContestantAvailable()) { return; }
         
         var rival = TournamentRivals[0];
-        var victoriousContestant = battle.PerformBattleBetweenContestants(Player, rival);
-            
-        InteractionManager.PrintOrderedFImons(victoriousContestant.FImons);
+        var battleResult = battle.PerformBattleBetweenContestants(Player, rival) == Player;
+
+        InteractionManager.PrintBattleResult(battleResult);
+        if (battleResult)
+        {
+            HandlePlayersVictory();   
+            Player.RecoverFImons();
+        }
+        else
+        {
+            HandlePlayersDefeat();   
+            rival.RecoverFImons();
+            Player.RecoverFImons();
+        }
+
         TournamentRivals.Remove(rival);
         Phase = GamePhase.Picking;
     }
@@ -163,8 +184,32 @@ public class Game : IGame
         Phase = GamePhase.Terminating;
     }
 
+    private void HandleVictoryPhase()
+    {
+        InteractionManager.PrintVictoryMessages();
+        Phase = GamePhase.Ending;
+    }
+
     private bool UpcomingContestantAvailable()
     {
         return TournamentRivals.Count > 0;
+    }
+
+    private void HandlePlayersVictory()
+    {
+        var fimonXpBonus = 85 + (15 * TournamentRivals.Count);
+        foreach (var fimon in Player.FImons)
+        {
+            fimon.Experience = fimonXpBonus;
+        }
+    }
+
+    private void HandlePlayersDefeat()
+    {
+        var fimonXpBonus = (85 + (15 * TournamentRivals.Count)) / 2;
+        foreach (var fimon in Player.FImons)
+        {
+            fimon.Experience = fimonXpBonus;
+        }
     }
 }

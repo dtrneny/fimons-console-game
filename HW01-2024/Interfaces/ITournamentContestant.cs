@@ -6,4 +6,6 @@ namespace HW01_2024.Interfaces;
 public interface ITournamentContestant
 {
     List<FImon> FImons { get; }
+
+    public void RecoverFImons();
 }
