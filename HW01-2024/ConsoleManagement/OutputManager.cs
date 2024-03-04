@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using HW01_2024.Classes;
 using HW01_2024.Enums;
 
-namespace HW01_2024.Managers;
+namespace HW01_2024.ConsoleManagement;
 
 public static class OutputManager
 {

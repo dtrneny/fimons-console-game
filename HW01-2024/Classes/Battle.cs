@@ -1,6 +1,5 @@
-using System;
 using HW01_2024.Interfaces;
-using HW01_2024.Managers;
+using HW01_2024.ConsoleManagement;
 
 namespace HW01_2024.Classes;
 

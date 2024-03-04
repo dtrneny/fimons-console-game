@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using HW01_2024.Enums;
 using HW01_2024.Interfaces;
-using HW01_2024.Managers;
+using HW01_2024.ConsoleManagement;
 
 namespace HW01_2024.Classes;
 

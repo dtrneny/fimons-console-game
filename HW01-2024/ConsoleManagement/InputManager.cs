@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HW01_2024.Managers;
+namespace HW01_2024.ConsoleManagement;
 
 public static class InputManager
 {
