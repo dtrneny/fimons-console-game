@@ -1,40 +1,43 @@
+using System;
 using HW01_2024.Interfaces;
 using HW01_2024.ConsoleManagement;
 
 namespace HW01_2024.Classes;
 
-public class Battle: IBattle
+public class Battle(OutputManager outputManager, InputManager inputManager): IBattle
 {
     public ITournamentContestant PerformBattleBetweenContestants(Player player, Rival enemy)
     {
         var roundCounter = 1;
         while (player.FImons.Exists(fimon => fimon.Health > 0) && enemy.FImons.Exists(fimon => fimon.Health > 0))
         {
-            // TODO: overit find
+            // TODO: overit find a exists
             var playerFImon = player.FImons.Find(fimon => fimon.Health > 0);
             var enemyFImon = enemy.FImons.Find(fimon => fimon.Health > 0);
 
             if (playerFImon == null || enemyFImon == null) continue;
             
-            OutputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
+            outputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
             var victoriousFImon = PerformBattleBetweenFImons(playerFImon, enemyFImon);
             
             if (victoriousFImon == playerFImon)
             {
-                OutputManager.PrintFImonDefeatMessage(enemyFImon, false);
+                outputManager.PrintFImonDefeatMessage(enemyFImon, false);
             }
             else
             {
-                OutputManager.PrintFImonDefeatMessage(playerFImon, true);
+                outputManager.PrintFImonDefeatMessage(playerFImon, true);
             }
             
-            InputManager.GetPlayersActivitySign();
+            inputManager.GetPlayersActivitySign();
             roundCounter++;
         }
 
-        return player.FImons.Exists(fimon => fimon.Health > 0)
-            ? player
-            : enemy;
+        var playerWon = player.FImons.Exists(fimon => fimon.Health > 0);
+        
+        CalculateAndAwardExperienceToPlayersFimons(roundCounter, player, playerWon);
+
+        return playerWon ? player : enemy;
     }
 
     public FImon PerformBattleBetweenFImons(FImon playerFImon, FImon enemyFImon)
@@ -68,6 +71,30 @@ public class Battle: IBattle
         
         attackingFImon.Attack(targetedFImon, damage);
 
-        OutputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
+        outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
+    }
+
+    private void CalculateAndAwardExperienceToPlayersFimons(int roundsCount, Player player, bool playerWon)
+    {
+        var random = new Random();
+        var baseExperiences = 5 * roundsCount;
+        
+        foreach (var fimon in player.FImons)
+        {
+            var randomizedExperiences = playerWon
+                ? random.Next(45, 65)
+                : random.Next(15, 45);
+            
+            AwardExperienceToFImon(randomizedExperiences + baseExperiences, fimon);
+        }
+    }
+
+    private void AwardExperienceToFImon(int experiences, FImon fimon)
+    {
+        if (fimon.WillLevelUp(experiences))
+        {
+            outputManager.PrintFImonLevelUpMessage(fimon.Name, fimon.Level + 1);
+        }
+        fimon.Experience = experiences;
     }
 }

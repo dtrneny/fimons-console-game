@@ -21,7 +21,10 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
             if (value < 0) return;
             if (_experience + value >= 100)
             {
-                LevelUp();
+                AttackDamage += 2;
+                MaxHealth += 5;
+                Speed++;
+                Level++;
                 _experience = (_experience + value) % 100;
             }
             else
@@ -38,12 +41,8 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
         target.Health -= damage;
     }
 
-    private void LevelUp()
+    public bool WillLevelUp(int experiences)
     {
-        AttackDamage += 2;
-        MaxHealth += 5;
-        Speed++;
-        Level++;
-        OutputManager.PrintFImonLevelUpMessage(Name, Level);
+        return Experience + experiences >= 100;
     }
 }

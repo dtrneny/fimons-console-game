@@ -5,7 +5,8 @@ namespace HW01_2024.Interfaces
 {
     public interface IGame
     {
-        GamePhase Phase { get; set; }
+        bool GameEnded { set; }
+        IGameState State { set; }
         Player Player { get; }
         /// <summary>
         /// Starts the game.

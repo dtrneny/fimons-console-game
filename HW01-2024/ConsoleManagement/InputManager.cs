@@ -1,42 +1,62 @@
 using System;
 using System.Collections.Generic;
+using HW01_2024.Interfaces;
+using Action = HW01_2024.Enums.Action;
 
 namespace HW01_2024.ConsoleManagement;
 
-public static class InputManager
+public sealed class InputManager
 {
-    private static int? SanitizeIntFromString(string? value)
+    
+    private readonly IOutputManager _outputManager = OutputManager.GetInstance();
+    private InputManager() { }
+    private static InputManager _instance;
+    
+    public static InputManager GetInstance()
+    {
+        if (_instance == null)
+        {
+            _instance = new InputManager();
+        }
+        return _instance;
+    }
+    
+    private int? SanitizeIntFromString(string? value)
     {
         return int.TryParse(value, out var output) ? output : null;
     }
     
-    public static int GetPlayersIntInputInRange(int min, int max)
+    private Action? SanitizeActionFromString(string? value)
     {
+        return Enum.TryParse<Action>(value, out var output) ? output : null;
+    }
+
+    public Action GetPlayersAction()
+    {
+        _outputManager.PrintActionMessages();
         while (true)
         {
             var input = Console.ReadLine();
-            var sanitizedInt = SanitizeIntFromString(input);
-
-            if (!sanitizedInt.HasValue)
+            var sanitizedAction = _instance.SanitizeActionFromString(input);
+    
+            if (!sanitizedAction.HasValue)
             {
-                OutputManager.PrintNotValidIntMessage();
+                _outputManager.PrintNotValidAction();
                 continue;
             }
-
-            if (!(sanitizedInt < min) && !(sanitizedInt > max)) { return sanitizedInt.Value; }
-            
-            OutputManager.PrintNotValidIntInRangeMessage(min, max);
+    
+            return sanitizedAction.Value;
         }
     }
     
-    public static void GetPlayersActivitySign()
+    public void GetPlayersActivitySign()
     {
-        OutputManager.PrintActivitySignMessage();
+        _outputManager.PrintActivitySignMessage();
         Console.ReadKey();
-        OutputManager.PrintEmptyLine();
+        _outputManager.PrintEmptyLine();
     }
     
-    public static List<int> GetPlayersIntInRangeListInput(int min, int max, int listLength)
+    public List<int> GetPlayersIntInRangeListInput(int min, int max, int listLength)
     {
         while (true)
         {
@@ -46,18 +66,18 @@ public static class InputManager
             var parts = input.Split(' ');
             if (parts.Length != listLength)
             {
-                OutputManager.PrintSeparatedIntListLengthExceededMessage(listLength);
+                _outputManager.PrintSeparatedIntListLengthExceededMessage(listLength);
                 continue;
             }
 
             List<int> output = [];
             foreach (var part in parts)
             {
-                var sanitizedInt = SanitizeIntFromString(part);
+                var sanitizedInt = _instance.SanitizeIntFromString(part);
 
                 if (!sanitizedInt.HasValue || sanitizedInt < min || sanitizedInt > max)
                 {
-                    OutputManager.PrintItemIsNotValidIntInRangeMessage(part, min, max);
+                    _outputManager.PrintItemIsNotValidIntInRangeMessage(part, min, max);
                     output.Clear();
                     break;
                 }
