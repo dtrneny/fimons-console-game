@@ -156,7 +156,7 @@ public sealed class OutputManager: IOutputManager
         _instance.PrintDecoratedConsoleTexts(["Select an action (1-5):"]);
         foreach (var actionPair in availableActions)
         {
-            Console.WriteLine($"{(int)actionPair.Key}. {actionPair.Key.ToString()}");
+            Console.WriteLine($"{(int)actionPair.Key}. {actionPair.Key}");
         }
     }
     

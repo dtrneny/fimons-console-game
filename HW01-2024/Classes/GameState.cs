@@ -7,7 +7,7 @@ public class StartingState: IGameState
 {
     public void Handle(Game context)
     {
-        var starterFImons = context.StarterFImons;
+        var starterFImons = context.FImonService.GetStarterFImons();
         context.OutputManager.PrintIntroductionMessages();
         context.OutputManager.PrintOrderedFImonsInfo(starterFImons);
 
@@ -38,7 +38,7 @@ public class FightingState: IGameState
 {
     public void Handle(Game context)
     {
-        var opponent = context.GetUpcomingOpponent();
+        var opponent = context.OpponentService.GetUpcomingOpponent();
 
         if (opponent == null)
         {
@@ -52,15 +52,22 @@ public class FightingState: IGameState
         var playerWon = battle.PerformBattleBetweenContestants(player, opponent) == player;
 
         context.OutputManager.PrintBattleResultMessage(playerWon);
+        
         if (playerWon)
         {
             context.Player.RecoverFImons();
-            context.TournamentOpponents.Remove(opponent);
+            context.OpponentService.RemoveOpponentFromTournament(opponent);
         }
         else
         {
             opponent.RecoverFImons();
             context.Player.RecoverFImons();
+        }
+
+        if (!context.OpponentService.CheckOpponentAvailability())
+        {
+            context.State = new VictoryState();
+            return;
         }
 
         context.State = new PickingState();

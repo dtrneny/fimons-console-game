@@ -6,7 +6,7 @@ public class CheckAction : IAction
 {
     public void Execute(Game context)
     {
-        var opponent = context.GetUpcomingOpponent();
+        var opponent = context.OpponentService.GetUpcomingOpponent();
         if (opponent == null)
         {
             context.State = new VictoryState();

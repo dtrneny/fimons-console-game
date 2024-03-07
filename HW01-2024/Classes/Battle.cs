@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using HW01_2024.Interfaces;
 using HW01_2024.ConsoleManagement;
 
@@ -9,35 +10,40 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
     public ITrainer PerformBattleBetweenContestants(Player player, Opponent enemy)
     {
         var roundCounter = 1;
-        while (player.FImons.Exists(fimon => fimon.Health > 0) && enemy.FImons.Exists(fimon => fimon.Health > 0))
-        {
-            // TODO: overit find a exists
-            var playerFImon = player.FImons.Find(fimon => fimon.Health > 0);
-            var enemyFImon = enemy.FImons.Find(fimon => fimon.Health > 0);
 
-            if (playerFImon == null || enemyFImon == null) continue;
-            
+        while (BothContestantsHaveActiveFImons(player, enemy))
+        {
+            var playerFImon = GetNextActiveFImon(player);
+            var enemyFImon = GetNextActiveFImon(enemy);
+
+            if (playerFImon == null || enemyFImon == null) { continue; }
+
             outputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
             var victoriousFImon = PerformBattleBetweenFImons(playerFImon, enemyFImon);
-            
-            if (victoriousFImon == playerFImon)
-            {
-                outputManager.PrintFImonDefeatMessage(enemyFImon, false);
-            }
-            else
-            {
-                outputManager.PrintFImonDefeatMessage(playerFImon, true);
-            }
-            
+
+            var playerWon = victoriousFImon == playerFImon;
+
+            outputManager.PrintFImonDefeatMessage(playerWon ? enemyFImon : playerFImon, playerWon);
+
             inputManager.GetPlayersActivitySign();
             roundCounter++;
         }
 
-        var playerWon = player.FImons.Exists(fimon => fimon.Health > 0);
-        
-        CalculateAndAwardExperienceToPlayersFimons(roundCounter, player, playerWon);
+        var playerWonOverall = player.FImons.Any(fimon => fimon.Health > 0);
 
-        return playerWon ? player : enemy;
+        CalculateAndAwardExperienceToPlayersFimons(roundCounter, player, playerWonOverall);
+
+        return playerWonOverall ? player : enemy;
+    }
+    
+    private bool BothContestantsHaveActiveFImons(Player player, Opponent enemy)
+    {
+        return player.FImons.Any(fimon => fimon.Health > 0) && enemy.FImons.Any(fimon => fimon.Health > 0);
+    }
+    
+    private FImon? GetNextActiveFImon(ITrainer trainer)
+    {
+        return trainer.FImons.FirstOrDefault(fimon => fimon.Health > 0);
     }
 
     public FImon PerformBattleBetweenFImons(FImon playerFImon, FImon enemyFImon)
