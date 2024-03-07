@@ -3,7 +3,7 @@ using HW01_2024.Classes;
 
 namespace HW01_2024.Interfaces;
 
-public interface ITournamentContestant
+public interface ITrainer
 {
     List<FImon> FImons { get; }
 

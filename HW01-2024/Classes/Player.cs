@@ -4,14 +4,14 @@ using HW01_2024.Interfaces;
 
 namespace HW01_2024.Classes;
 
-public class Player : ITournamentContestant
+public class Player : ITrainer
 {
     public List<FImon> FImons { get; private set; } = [];
     public void RecoverFImons()
     {
         foreach (var fimon in FImons)
         {
-            fimon.Health = fimon.MaxHealth;
+            fimon.RecoverHealth();
         }
     }
 

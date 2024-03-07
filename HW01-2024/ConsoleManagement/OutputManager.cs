@@ -116,17 +116,17 @@ public sealed class OutputManager: IOutputManager
     
     public void PrintFImonAttackMessage(FImon attackingFImon, FImon targetedFImon, int damage, bool playersFImon)
     {
-        Console.Write(playersFImon ? "Player's " : "Enemy's ");
+        Console.Write(playersFImon ? "Player's " : "Opponent's ");
         _instance.PrintColoredStringsAndClearConsole([ attackingFImon.Name ], _instance.GetFImonOriginColor(attackingFImon));
         Console.Write($" dealt {damage} damage to ");
-        Console.Write(playersFImon ? "enemy's " : "player's ");
+        Console.Write(playersFImon ? "opponent's " : "player's ");
         _instance.PrintColoredStringsAndClearConsole([ targetedFImon.Name ], _instance.GetFImonOriginColor(targetedFImon));
         _instance.PrintEmptyLine();
     }
     
     public void PrintFImonDefeatMessage(FImon defeatedFImon, bool playersFImon)
     {
-        Console.Write(playersFImon ? "Player's " : "Enemy's ");
+        Console.Write(playersFImon ? "Player's " : "Opponent's ");
         _instance.PrintColoredStringsAndClearConsole([ defeatedFImon.Name ], _instance.GetFImonOriginColor(defeatedFImon));
         Console.Write(" was defeated!");
         _instance.PrintEmptyLine();
@@ -151,12 +151,12 @@ public sealed class OutputManager: IOutputManager
     }
     
     // Game oriented messages
-    public void PrintActionMessages()
+    public void PrintActionMessages(Dictionary<Action, IAction> availableActions)
     {
         _instance.PrintDecoratedConsoleTexts(["Select an action (1-5):"]);
-        foreach (Action action in Enum.GetValues(typeof(Action)))
+        foreach (var actionPair in availableActions)
         {
-            Console.WriteLine($"{(int)action}. {action}");
+            Console.WriteLine($"{(int)actionPair.Key}. {actionPair.Key.ToString()}");
         }
     }
     

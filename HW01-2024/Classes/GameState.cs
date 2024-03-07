@@ -12,8 +12,11 @@ public class StartingState: IGameState
         context.OutputManager.PrintOrderedFImonsInfo(starterFImons);
 
         var selection = context.InputManager.GetPlayersIntInRangeListInput(1, starterFImons.Count, 3);
-        
-        foreach (var orderNum in selection) { context.Player.FImons.Add(starterFImons[orderNum - 1]); }
+
+        foreach (var orderNum in selection)
+        {
+            context.Player.FImons.Add(starterFImons[orderNum - 1]);
+        }
 
         context.OutputManager.PrintChosenFImons(context.Player.FImons);
 
@@ -25,6 +28,7 @@ public class PickingState: IGameState
 {
     public void Handle(Game context)
     {
+        context.OutputManager.PrintActionMessages(context.ActionController.Actions);
         var selectedAction = context.InputManager.GetPlayersAction();
         context.ActionController.ExecuteAction(selectedAction);
     }
@@ -34,9 +38,9 @@ public class FightingState: IGameState
 {
     public void Handle(Game context)
     {
-        var rival = context.GetUpcomingContestant();
+        var opponent = context.GetUpcomingOpponent();
 
-        if (rival == null)
+        if (opponent == null)
         {
             context.State = new VictoryState();
             return;
@@ -45,17 +49,17 @@ public class FightingState: IGameState
         var battle = new Battle(context.OutputManager, context.InputManager);
         
         var player = context.Player;
-        var playerWon = battle.PerformBattleBetweenContestants(player, rival) == player;
+        var playerWon = battle.PerformBattleBetweenContestants(player, opponent) == player;
 
         context.OutputManager.PrintBattleResultMessage(playerWon);
         if (playerWon)
         {
             context.Player.RecoverFImons();
-            context.TournamentRivals.Remove(rival);
+            context.TournamentOpponents.Remove(opponent);
         }
         else
         {
-            rival.RecoverFImons();
+            opponent.RecoverFImons();
             context.Player.RecoverFImons();
         }
 

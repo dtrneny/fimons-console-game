@@ -45,4 +45,9 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
     {
         return Experience + experiences >= 100;
     }
+
+    public void RecoverHealth()
+    {
+        Health = MaxHealth;
+    }
 }

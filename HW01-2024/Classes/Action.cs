@@ -6,14 +6,14 @@ public class CheckAction : IAction
 {
     public void Execute(Game context)
     {
-        var rival = context.GetUpcomingContestant();
-        if (rival == null)
+        var opponent = context.GetUpcomingOpponent();
+        if (opponent == null)
         {
             context.State = new VictoryState();
             return;
         }
         
-        context.OutputManager.PrintOrderedFImonsInfo(rival.FImons);
+        context.OutputManager.PrintOrderedFImonsInfo(opponent.FImons);
     }
 }
 

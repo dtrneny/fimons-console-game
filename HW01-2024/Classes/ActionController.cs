@@ -8,7 +8,7 @@ public class ActionController(Game context)
 {
     private Game Context { get; } = context;
     
-    private Dictionary<Action, IAction> _actions = new()
+    public Dictionary<Action, IAction> Actions { get; } = new()
     {
         { Action.Check, new CheckAction() },
         { Action.Fight, new FightAction() },
@@ -19,7 +19,7 @@ public class ActionController(Game context)
 
     public void ExecuteAction(Action action)
     {
-        if (_actions.TryGetValue(action, out var value))
+        if (Actions.TryGetValue(action, out var value))
         {
             value.Execute(Context);
         }

@@ -6,7 +6,7 @@ namespace HW01_2024.Classes;
 
 public class Battle(OutputManager outputManager, InputManager inputManager): IBattle
 {
-    public ITournamentContestant PerformBattleBetweenContestants(Player player, Rival enemy)
+    public ITrainer PerformBattleBetweenContestants(Player player, Opponent enemy)
     {
         var roundCounter = 1;
         while (player.FImons.Exists(fimon => fimon.Health > 0) && enemy.FImons.Exists(fimon => fimon.Health > 0))

@@ -33,7 +33,6 @@ public sealed class InputManager
 
     public Action GetPlayersAction()
     {
-        _outputManager.PrintActionMessages();
         while (true)
         {
             var input = Console.ReadLine();
@@ -79,7 +78,7 @@ public sealed class InputManager
                 {
                     _outputManager.PrintItemIsNotValidIntInRangeMessage(part, min, max);
                     output.Clear();
-                    break;
+                    continue;
                 }
 
                 output.Add(sanitizedInt.Value);

@@ -10,7 +10,7 @@ namespace HW01_2024.Interfaces
         /// <param name="player">Player trainer</param>
         /// <param name="enemy">Enemy trainer</param>
         /// <returns>Winner trainer</returns>
-        public ITournamentContestant PerformBattleBetweenContestants(Player player, Rival enemy);
+        public ITrainer PerformBattleBetweenContestants(Player player, Opponent enemy);
 
         /// <summary>
         /// Performs one round of a battle between two FImons.
