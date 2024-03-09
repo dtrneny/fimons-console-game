@@ -48,7 +48,12 @@ public sealed class OutputManager: IOutputManager
     
     public void PrintNotValidAction()
     {
-        Console.WriteLine("This player action isn't valid.");
+        Console.WriteLine("Invalid player action.");
+    }
+
+    public void PrintNotDistinctValue(int value)
+    {
+        Console.WriteLine($"Invalid input. Value '{value}' isn't distinct from other.");
     }
 
     private void PrintColoredStringsAndClearConsole(string[] texts, ConsoleColor color, bool separateWithNewline = false)
@@ -67,9 +72,9 @@ public sealed class OutputManager: IOutputManager
 
     private void PrintDecoratedConsoleTexts(string[] texts)
     {
-        _instance.PrintDivider();
-        _instance.PrintColoredStringsAndClearConsole(texts, ConsoleColor.Yellow, true);
-        _instance.PrintDivider();
+        PrintDivider();
+        PrintColoredStringsAndClearConsole(texts, ConsoleColor.Yellow, true);
+        PrintDivider();
     }
     
     // FImon oriented messages
@@ -91,7 +96,7 @@ public sealed class OutputManager: IOutputManager
             var fimon = fimons[i];
             
             Console.Write($"{i + 1}. ");
-            PrintColoredStringsAndClearConsole([ fimon.Name ], _instance.GetFImonOriginColor(fimon));
+            PrintColoredStringsAndClearConsole([ fimon.Name ], GetFImonOriginColor(fimon));
             Console.Write($": {fimon.AttackDamage} Attack, {fimon.Health} HP, {fimon.Speed} Speed");
         
             if (extendedInfo)
@@ -105,55 +110,55 @@ public sealed class OutputManager: IOutputManager
     
     public void PrintBattleAnnouncementMessage(FImon playerFImon, FImon enemyFImon, int round)
     {
-        _instance.PrintDivider();
+        PrintDivider();
         Console.Write($"Round {round}: ");
-        _instance.PrintColoredStringsAndClearConsole([ playerFImon.Name ], _instance.GetFImonOriginColor(playerFImon));
+        PrintColoredStringsAndClearConsole([ playerFImon.Name ], GetFImonOriginColor(playerFImon));
         Console.Write(" vs. ");
-        _instance.PrintColoredStringsAndClearConsole([ enemyFImon.Name ], _instance.GetFImonOriginColor(enemyFImon));
-        _instance.PrintEmptyLine();
-        _instance.PrintDivider();
+        PrintColoredStringsAndClearConsole([ enemyFImon.Name ], GetFImonOriginColor(enemyFImon));
+        PrintEmptyLine();
+        PrintDivider();
     }
     
     public void PrintFImonAttackMessage(FImon attackingFImon, FImon targetedFImon, int damage, bool playersFImon)
     {
         Console.Write(playersFImon ? "Player's " : "Opponent's ");
-        _instance.PrintColoredStringsAndClearConsole([ attackingFImon.Name ], _instance.GetFImonOriginColor(attackingFImon));
+        PrintColoredStringsAndClearConsole([ attackingFImon.Name ], GetFImonOriginColor(attackingFImon));
         Console.Write($" dealt {damage} damage to ");
         Console.Write(playersFImon ? "opponent's " : "player's ");
-        _instance.PrintColoredStringsAndClearConsole([ targetedFImon.Name ], _instance.GetFImonOriginColor(targetedFImon));
-        _instance.PrintEmptyLine();
+        PrintColoredStringsAndClearConsole([ targetedFImon.Name ], GetFImonOriginColor(targetedFImon));
+        PrintEmptyLine();
     }
     
     public void PrintFImonDefeatMessage(FImon defeatedFImon, bool playersFImon)
     {
         Console.Write(playersFImon ? "Player's " : "Opponent's ");
-        _instance.PrintColoredStringsAndClearConsole([ defeatedFImon.Name ], _instance.GetFImonOriginColor(defeatedFImon));
+        PrintColoredStringsAndClearConsole([ defeatedFImon.Name ], GetFImonOriginColor(defeatedFImon));
         Console.Write(" was defeated!");
-        _instance.PrintEmptyLine();
+        PrintEmptyLine();
     }
     
     public void PrintFImonLevelUpMessage(string fimonName, int level)
     {
-        _instance.PrintColoredStringsAndClearConsole([ $"{fimonName} is now level {level}!" ], ConsoleColor.Yellow);
-        _instance.PrintEmptyLine();
+        PrintColoredStringsAndClearConsole([ $"{fimonName} is now level {level}!" ], ConsoleColor.Yellow);
+        PrintEmptyLine();
     }
 
     public void PrintChosenFImons(List<FImon> fimons)
     {
-        _instance.PrintDecoratedConsoleTexts(["You have chosen those FImons:"]);
-        _instance.PrintOrderedFImonsInfo(fimons);
+        PrintDecoratedConsoleTexts(["You have chosen those FImons:"]);
+        PrintOrderedFImonsInfo(fimons);
     }
     
     // Battle oriented messages
     public void PrintBattleResultMessage(bool playerWon)
     {
-        _instance.PrintDecoratedConsoleTexts([ $"You {(playerWon ? "won" : "lost")} the battle." ]);
+        PrintDecoratedConsoleTexts([ $"You {(playerWon ? "won" : "lost")} the battle." ]);
     }
     
     // Game oriented messages
     public void PrintActionMessages(Dictionary<Action, IAction> availableActions)
     {
-        _instance.PrintDecoratedConsoleTexts(["Select an action (1-5):"]);
+        PrintDecoratedConsoleTexts(["Select an action (1-5 or by Name, e. g. Check):"]);
         foreach (var actionPair in availableActions)
         {
             Console.WriteLine($"{(int)actionPair.Key}. {actionPair.Key}");
@@ -162,7 +167,7 @@ public sealed class OutputManager: IOutputManager
     
     public void PrintIntroductionMessages()
     {
-        _instance.PrintDecoratedConsoleTexts([
+        PrintDecoratedConsoleTexts([
             "Welcome to the FImon Championship! We're delighted to have you here.",
             "Please select three FImons for your upcoming battles using sequence of numbers (e.g. 1 2 3):"
         ]);
@@ -170,19 +175,27 @@ public sealed class OutputManager: IOutputManager
     
     public void PrintSortingMessage()
     {
-        _instance.PrintDecoratedConsoleTexts(["Please enter sequence of numbers which represents their order (e.g. 1 2 3):"]);
+        PrintDecoratedConsoleTexts(["Please enter sequence of numbers which represents their order (e.g. 1 2 3):"]);
     }
     
     public void PrintEndingMessage()
     {
-        _instance.PrintDecoratedConsoleTexts(["Thank you for playing FImons. We hope you had a great time!"]);
+        PrintDecoratedConsoleTexts(["Thank you for playing FImons. We hope you had a great time!"]);
     }
     
     public void PrintVictoryMessages()
     {
-        _instance.PrintDecoratedConsoleTexts([
+        PrintDecoratedConsoleTexts([
             "Congratulations! You've emerged victorious, defeating all tournament opponents with skill and determination.",
             "As the new champion, you've unlocked the doors to even more exciting tournaments waiting for you to explore."
         ]);
+    }
+    
+    // Action related messages
+    public void PrintInfoActionMessages(int numberOfWonBattles, List<FImon> playerFImons)
+    {
+        Console.WriteLine($"Battles won: {numberOfWonBattles}");
+        Console.WriteLine("Your FImons:");
+        PrintOrderedFImonsInfo(playerFImons, true);
     }
 }

@@ -15,14 +15,14 @@ public class OpponentService: IOpponentRepository
             new FImon("Meganium", 7, 22, 25, FImonOrigin.Grass),
         ]),
         new Opponent([
-            new FImon("Gengar", 7, 19, 28, FImonOrigin.Fire),
-            new FImon("Jolteon", 6, 20, 28, FImonOrigin.Water),
-            new FImon("Alakazam", 7, 18, 29, FImonOrigin.Grass),
+            new FImon("Jolteon", 10, 20, 24, FImonOrigin.Water),
+            new FImon("Alakazam", 6, 25, 29, FImonOrigin.Grass),
+            new FImon("Gengar", 9, 19, 26, FImonOrigin.Fire),
         ]),
         new Opponent([
-            new FImon("Pikachu", 6, 18, 30, FImonOrigin.Fire),
-            new FImon("Squirtle", 6, 19, 29, FImonOrigin.Water),
-            new FImon("Bulbasaur", 6, 18, 30, FImonOrigin.Grass),
+            new FImon("Raichu", 11, 18, 30, FImonOrigin.Fire),
+            new FImon("Ninetales", 12, 18, 30, FImonOrigin.Fire),
+            new FImon("Squirtle", 8, 19, 29, FImonOrigin.Water),
         ]),
     ];
     

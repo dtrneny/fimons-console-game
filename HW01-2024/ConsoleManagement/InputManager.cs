@@ -80,6 +80,13 @@ public sealed class InputManager
                     output.Clear();
                     continue;
                 }
+                
+                if (output.Contains(sanitizedInt.Value))
+                {
+                    _outputManager.PrintNotDistinctValue(sanitizedInt.Value);
+                    output.Clear();
+                    break;
+                }
 
                 output.Add(sanitizedInt.Value);
             }

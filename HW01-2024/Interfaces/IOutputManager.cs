@@ -5,10 +5,12 @@ namespace HW01_2024.Interfaces;
 
 public interface IOutputManager
 {
-    void PrintEmptyLine();
-    void PrintSeparatedIntListLengthExceededMessage(int listLength);
-    void PrintItemIsNotValidIntInRangeMessage(string part, int min, int max);
-    void PrintActivitySignMessage();
+    public void PrintEmptyLine();
+    public void PrintSeparatedIntListLengthExceededMessage(int listLength);
+    public void PrintItemIsNotValidIntInRangeMessage(string part, int min, int max);
+    public void PrintActivitySignMessage();
     public void PrintNotValidAction();
+
+    public void PrintNotDistinctValue(int value);
 
 }

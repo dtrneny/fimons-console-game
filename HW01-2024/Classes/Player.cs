@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using HW01_2024.Interfaces;
@@ -17,8 +18,9 @@ public class Player : ITrainer
 
     public void SortFImons(List<int> order)
     {
+        if (order.Count != FImons.Count || order.Any(index => index < 1 || index > FImons.Count)) { return; }
+
         FImons = order
-            .Where(index => index >= 1 && index <= FImons.Count)
             .Select(index => FImons[index - 1])
             .ToList();
     }

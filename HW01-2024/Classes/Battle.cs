@@ -31,7 +31,7 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
 
         var playerWonOverall = player.FImons.Any(fimon => fimon.Health > 0);
 
-        CalculateAndAwardExperienceToPlayersFimons(roundCounter, player, playerWonOverall);
+        CalculateAndAwardExperienceToPlayersFImons(roundCounter, player, playerWonOverall);
 
         return playerWonOverall ? player : enemy;
     }
@@ -80,7 +80,7 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
         outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
     }
 
-    private void CalculateAndAwardExperienceToPlayersFimons(int roundsCount, Player player, bool playerWon)
+    private void CalculateAndAwardExperienceToPlayersFImons(int roundsCount, Player player, bool playerWon)
     {
         var random = new Random();
         var baseExperiences = 5 * roundsCount;

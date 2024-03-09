@@ -4,5 +4,5 @@ namespace HW01_2024.Interfaces;
 
 public interface IAction
 {
-    void Execute(Game context);
+    public void Execute(Game context);
 }

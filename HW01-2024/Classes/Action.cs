@@ -28,8 +28,8 @@ public class FightAction : IAction
 public class InfoAction : IAction
 {
     public void Execute(Game context)
-    { 
-        context.OutputManager.PrintOrderedFImonsInfo(context.Player.FImons, true);
+    {
+        context.OutputManager.PrintInfoActionMessages(context.WonBattlesCount, context.Player.FImons);
     }
 }
 

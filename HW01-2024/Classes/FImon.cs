@@ -1,3 +1,4 @@
+using System;
 using HW01_2024.Enums;
 using HW01_2024.ConsoleManagement;
 
@@ -9,7 +10,7 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
     public string Name { get; } = name;
     public int AttackDamage { get; private set; } = attackDamage;
     public int Health { get; set; } = health;
-    public int MaxHealth { get; private set; } = health;
+    private int MaxHealth { get; set; } = health;
     public int Speed { get; private set; } = speed;
     public int Level { get; private set; } = 1;
 
@@ -21,10 +22,13 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
             if (value < 0) return;
             if (_experience + value >= 100)
             {
-                AttackDamage += 2;
-                MaxHealth += 5;
-                Speed++;
+                var random = new Random();
+                
+                AttackDamage += random.Next(1, 3);
+                MaxHealth += random.Next(5, 7);
+                Speed += random.Next(1, 3);
                 Level++;
+                
                 _experience = (_experience + value) % 100;
             }
             else

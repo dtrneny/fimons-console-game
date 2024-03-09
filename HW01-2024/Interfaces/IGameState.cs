@@ -4,5 +4,5 @@ namespace HW01_2024.Interfaces;
 
 public interface IGameState
 {
-    void Handle(Game context);
+    public void Handle(Game context);
 }

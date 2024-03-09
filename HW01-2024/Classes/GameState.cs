@@ -57,6 +57,7 @@ public class FightingState: IGameState
         {
             context.Player.RecoverFImons();
             context.OpponentService.RemoveOpponentFromTournament(opponent);
+            context.WonBattlesCount++;
         }
         else
         {

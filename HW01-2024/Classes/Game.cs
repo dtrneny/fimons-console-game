@@ -12,11 +12,14 @@ public class Game : IGame
     public bool GameEnded { get; set; }
     public IGameState State { get; set; } = new StartingState();
     public Player Player { get; } = new();
+    public int WonBattlesCount { get; set; } = 0;
+    
     public readonly InputManager InputManager = InputManager.GetInstance();
     public readonly OutputManager OutputManager = OutputManager.GetInstance();
+    public readonly ActionController ActionController;
+
     public OpponentService OpponentService = new();
     public FImonService FImonService = new();
-    public readonly ActionController ActionController;
 
     public Game()
     {
