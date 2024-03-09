@@ -48,13 +48,6 @@ public sealed class InputManager
         }
     }
     
-    public void GetPlayersActivitySign()
-    {
-        _outputManager.PrintActivitySignMessage();
-        Console.ReadKey();
-        _outputManager.PrintEmptyLine();
-    }
-    
     public List<int> GetPlayersIntInRangeListInput(int min, int max, int listLength)
     {
         while (true)

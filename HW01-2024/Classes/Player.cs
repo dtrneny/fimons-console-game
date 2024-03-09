@@ -7,7 +7,15 @@ namespace HW01_2024.Classes;
 
 public class Player : ITrainer
 {
-    public List<FImon> FImons { get; private set; } = [];
+    public List<FImon> FImons { get; set; } = [];
+
+    public Player() {}
+    
+    public Player(List<FImon> fimons)
+    {
+        FImons = fimons;
+    }
+    
     public void RecoverFImons()
     {
         foreach (var fimon in FImons)

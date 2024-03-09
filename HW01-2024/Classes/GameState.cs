@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using HW01_2024.Interfaces;
 
 namespace HW01_2024.Classes;
@@ -13,10 +14,15 @@ public class StartingState: IGameState
 
         var selection = context.InputManager.GetPlayersIntInRangeListInput(1, starterFImons.Count, 3);
 
-        foreach (var orderNum in selection)
+        if (selection.Any(index => index < 1 || index > starterFImons.Count))
         {
-            context.Player.FImons.Add(starterFImons[orderNum - 1]);
+            context.State = new StartingState();
+            return;
         }
+        
+        context.Player.FImons = selection
+            .Select(index => starterFImons[index - 1])
+            .ToList();
 
         context.OutputManager.PrintChosenFImons(context.Player.FImons);
 
@@ -46,7 +52,7 @@ public class FightingState: IGameState
             return;
         }
         
-        var battle = new Battle(context.OutputManager, context.InputManager);
+        var battle = new Battle();
         
         var player = context.Player;
         var playerWon = battle.PerformBattleBetweenContestants(player, opponent) == player;

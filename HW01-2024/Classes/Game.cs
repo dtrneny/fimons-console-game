@@ -12,7 +12,7 @@ public class Game : IGame
     public bool GameEnded { get; set; }
     public IGameState State { get; set; } = new StartingState();
     public Player Player { get; } = new();
-    public int WonBattlesCount { get; set; } = 0;
+    public int WonBattlesCount { get; set; }
     
     public readonly InputManager InputManager = InputManager.GetInstance();
     public readonly OutputManager OutputManager = OutputManager.GetInstance();

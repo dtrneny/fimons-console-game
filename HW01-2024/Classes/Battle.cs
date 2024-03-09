@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
+using HW01_2024.Classes;
 using HW01_2024.Interfaces;
 using HW01_2024.ConsoleManagement;
 
-namespace HW01_2024.Classes;
-
-public class Battle(OutputManager outputManager, InputManager inputManager): IBattle
+public class Battle: IBattle
 {
+    private readonly OutputManager _outputManager = OutputManager.GetInstance();
+    
     public ITrainer PerformBattleBetweenContestants(Player player, Opponent enemy)
     {
         var roundCounter = 1;
@@ -15,17 +16,21 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
         {
             var playerFImon = GetNextActiveFImon(player);
             var enemyFImon = GetNextActiveFImon(enemy);
-
+            
             if (playerFImon == null || enemyFImon == null) { continue; }
 
-            outputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
-            var victoriousFImon = PerformBattleBetweenFImons(playerFImon, enemyFImon);
+            _outputManager.PrintBattleAnnouncementMessage(playerFImon, enemyFImon, roundCounter);
+            var playersFImonWon = PerformBattleBetweenFImons(playerFImon, enemyFImon) == playerFImon;
 
-            var playerWon = victoriousFImon == playerFImon;
-
-            outputManager.PrintFImonDefeatMessage(playerWon ? enemyFImon : playerFImon, playerWon);
-
-            inputManager.GetPlayersActivitySign();
+            if (playersFImonWon)
+            {
+                _outputManager.PrintFImonDefeatMessage(enemyFImon, false);
+            }
+            else
+            {
+                _outputManager.PrintFImonDefeatMessage(playerFImon, true);
+            }
+            
             roundCounter++;
         }
 
@@ -62,7 +67,7 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
             }   
         }
 
-        return playerFImon.Health >= 0
+        return playerFImon.Health > 0
             ? playerFImon
             : enemyFImon;
     }
@@ -77,7 +82,7 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
         
         attackingFImon.Attack(targetedFImon, damage);
 
-        outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
+        _outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
     }
 
     private void CalculateAndAwardExperienceToPlayersFImons(int roundsCount, Player player, bool playerWon)
@@ -99,7 +104,7 @@ public class Battle(OutputManager outputManager, InputManager inputManager): IBa
     {
         if (fimon.WillLevelUp(experiences))
         {
-            outputManager.PrintFImonLevelUpMessage(fimon.Name, fimon.Level + 1);
+            _outputManager.PrintFImonLevelUpMessage(fimon.Name, fimon.Level + 1);
         }
         fimon.Experience = experiences;
     }
