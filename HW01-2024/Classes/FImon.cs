@@ -40,9 +40,15 @@ public class FImon (string name, int attackDamage, int health, int speed, FImonO
 
     public FImonCharacteristic Characteristic { get; } = new(origin);
 
-    public void Attack(FImon target, int damage)
+    public int Attack(FImon target)
     {
+        var damage = Characteristic.Origin == target.Characteristic.WeaknessTo
+            ? AttackDamage * 2
+            : AttackDamage;
+        
         target.Health -= damage;
+
+        return damage;
     }
 
     public bool WillLevelUp(int experiences)

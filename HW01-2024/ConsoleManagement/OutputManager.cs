@@ -7,7 +7,7 @@ using Action = HW01_2024.Enums.Action;
 
 namespace HW01_2024.ConsoleManagement;
 
-public sealed class OutputManager: IOutputManager
+public sealed class OutputManager
 {
     private OutputManager() { }
     private static OutputManager _instance;
@@ -53,7 +53,7 @@ public sealed class OutputManager: IOutputManager
 
     public void PrintNotDistinctValue(int value)
     {
-        Console.WriteLine($"Invalid input. Value '{value}' isn't distinct from other.");
+        Console.WriteLine($"Invalid input. The value '{value}' is used more than once.");
     }
 
     private void PrintColoredStringsAndClearConsole(string[] texts, ConsoleColor color, bool separateWithNewline = false)

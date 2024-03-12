@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
-using HW01_2024.Classes;
-using HW01_2024.Interfaces;
 using HW01_2024.ConsoleManagement;
+using HW01_2024.Interfaces;
+
+namespace HW01_2024.Classes;
 
 public class Battle: IBattle
 {
@@ -76,13 +77,9 @@ public class Battle: IBattle
     {
         if (attackingFImon.Health <= 0) { return; }
         
-        var damage = attackingFImon.Characteristic.Origin == targetedFImon.Characteristic.WeaknessTo
-            ? attackingFImon.AttackDamage * 2
-            : attackingFImon.AttackDamage;
-        
-        attackingFImon.Attack(targetedFImon, damage);
+        var finalDamage = attackingFImon.Attack(targetedFImon);
 
-        _outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, damage, playerAttacking);
+        _outputManager.PrintFImonAttackMessage(attackingFImon, targetedFImon, finalDamage, playerAttacking);
     }
 
     private void CalculateAndAwardExperienceToPlayersFImons(int roundsCount, Player player, bool playerWon)

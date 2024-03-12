@@ -8,7 +8,7 @@ namespace HW01_2024.ConsoleManagement;
 public sealed class InputManager
 {
     
-    private readonly IOutputManager _outputManager = OutputManager.GetInstance();
+    private readonly OutputManager _outputManager = OutputManager.GetInstance();
     private InputManager() { }
     private static InputManager _instance;
     
